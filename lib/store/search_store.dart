@@ -3,49 +3,53 @@ import 'package:repo_lover/models/repository_model.dart';
 import 'package:repo_lover/models/search_result_model.dart';
 import 'package:repo_lover/services/api_github_service.dart';
 
-class SearchStore {
+import '../models/repository_model.dart';
+
+part 'search_store.g.dart';
+
+class SearchStore = SearchStoreBase with _$SearchStore;
+
+abstract class SearchStoreBase with Store {
   final _apiGithubService = ApiGithubService();
 
-  SearchStore() {
-      search = Action(_search);
-      addItemLoved = Action(_addItemLoved);
-      removeItemLoved = Action(_removeItemLoved);
-      setIsLoading = Action(_setIsLoading);
+  @observable
+  Observable<SearchResultModel> searchResultModel = Observable(null);
+
+  @observable
+  bool isLoading = false;
+
+  @observable
+  ObservableSet<RepositoryModel> itemsLoved =
+      ObservableSet.of(<RepositoryModel>[]);
+
+  @action
+  addItemLoved(RepositoryModel item) {
+    item.setIsLoved(true);
+    itemsLoved.add(item);
   }
 
-  final _searchResultModel = Observable(SearchResultModel());
-  SearchResultModel get searchResultModel => _searchResultModel.value;
+  @action
+  removeItemLoved(RepositoryModel item) {
+    item.setIsLoved(false);
+    itemsLoved.remove(item);
+  }
 
-  set searchResultModel(SearchResultModel newValue) => _searchResultModel.value = newValue;
-
-  final _isLoading = Observable(false);
-  bool get isLoading => _isLoading.value;
-  
-  Action setIsLoading;
-  _setIsLoading(bool newValue) => _isLoading.value = newValue;
-  
-  final _itemsLoved = Observable(<RepositoryModel>[].toSet());
-  
-  Set<RepositoryModel> get itemsLoved => _itemsLoved.value;
-
-  Action addItemLoved;
-  Action removeItemLoved;
-
-  _addItemLoved(RepositoryModel item) => _itemsLoved.value.add(item);
-  _removeItemLoved(RepositoryModel item) => _itemsLoved.value.remove(item);
-
-
- Action search;
-
-  _search(String term) async {
-    _isLoading.value = true;
-    final _result = await _apiGithubService.searchRepo(term);
-    
-    _searchResultModel.value = _result;
-    _isLoading.value = false;
+  @action
+  Future<void> search(String term) async {
+    if (term.isEmpty) {
+      return;
+    }
+    isLoading = true;
+    searchResultModel.value = await _apiGithubService.searchRepo(term);
+    searchResultModel.value.items.forEach((e) async {
+      if (isLoved(e)) {
+        await e.setIsLoved(true);
+      }
+    });
+    isLoading = false;
   }
 
   isLoved(item) {
-    return _itemsLoved.value.contains(item);
+    return itemsLoved.firstWhere(item)?.id != null;
   }
 }

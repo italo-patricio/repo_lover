@@ -8,14 +8,14 @@ class ApiGithubService {
 
   ApiGithubService();
 
-  Future searchRepo(term) async {
-    var response = await http.get(Uri.parse('$_urlApiGithub/search/repositories?q=$term'));
+  Future<SearchResultModel> searchRepo(term) async {
+    var response =
+        await http.get(Uri.parse('$_urlApiGithub/search/repositories?q=$term'));
     if (response.statusCode == 200) {
-        return SearchResultModel.fromJson(converter.jsonDecode(response.body));
-        
-      } else {
-        throw Exception('O servidor respondeu com falha de status ${response.statusCode}');
-      }
+      return SearchResultModel.fromJson(converter.jsonDecode(response.body));
+    } else {
+      throw Exception(
+          'O servidor respondeu com falha de status ${response.statusCode}');
+    }
   }
-
 }

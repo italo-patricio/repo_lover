@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:repo_lover/models/search_result_model.dart';
 import 'package:repo_lover/pages/repo_loved_page.dart';
 import 'package:repo_lover/store/search_store.dart';
 import 'package:repo_lover/widgets/icon_love_badge_widget.dart';
@@ -29,18 +28,18 @@ class _SearchRepoPageState extends State<SearchRepoPage> {
           'Repo lover',
         ),
         actions: <Widget>[
-          IconButton(
-              icon: IconLoveBadgeWidget(
-                countBadge: _searchStore.itemsLoved.length,
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => RepoLovedPage(
-                              searchStore: _searchStore,
-                            )));
-              })
+          IconButton(icon: Observer(builder: (_) {
+            return IconLoveBadgeWidget(
+              countBadge: _searchStore.itemsLoved.length,
+            );
+          }), onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => RepoLovedPage(
+                          searchStore: _searchStore,
+                        )));
+          })
         ],
       ),
       body: Padding(
@@ -49,27 +48,27 @@ class _SearchRepoPageState extends State<SearchRepoPage> {
           if (_searchStore.isLoading) {
             return Center(child: CircularProgressIndicator());
           }
+
           return Column(
             children: <Widget>[
               InputWidget(
                 placeholder: 'Pesquisar',
-                onSubmitted: (term) => _searchStore.search.call([term]),
+                onSubmitted: _searchStore.search,
               ),
               messageInfo(),
               Expanded(
                 child: ListView.builder(
                     itemCount:
-                        _searchStore.searchResultModel?.items?.length ?? 0,
+                        _searchStore.searchResultModel?.value?.items?.length ??
+                            0,
                     itemBuilder: (_, index) {
-                      final _item = _searchStore.searchResultModel.items[index];
-                      final _loved = _searchStore.isLoved(_item);
+                      final _item =
+                          _searchStore.searchResultModel.value.items[index];
+
                       return RepositoryItemWidget(
                         item: _item,
-                        isLoved: _loved,
-                        onLoveAdd: (item) =>
-                            _searchStore.addItemLoved.call([item]),
-                        onLoveRemove: (item) =>
-                            _searchStore.removeItemLoved.call([item]),
+                        onLoveAdd: _searchStore.addItemLoved,
+                        onLoveRemove: _searchStore.removeItemLoved,
                       );
                     }),
               )
@@ -81,11 +80,11 @@ class _SearchRepoPageState extends State<SearchRepoPage> {
   }
 
   messageInfo() {
-    if (_searchStore.searchResultModel.items != null) {
+    if (_searchStore.searchResultModel?.value?.items != null) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Text(
-          '${_searchStore.searchResultModel.totalCount} Repositórios localizados',
+          '${_searchStore.searchResultModel.value.totalCount} Repositórios localizados',
           style: GoogleFonts.lato(
             fontSize: 17,
             color: Color(0xff8F8B8B),
