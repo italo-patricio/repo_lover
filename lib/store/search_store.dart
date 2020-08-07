@@ -50,6 +50,8 @@ abstract class SearchStoreBase with Store {
   }
 
   isLoved(item) {
-    return itemsLoved.firstWhere(item)?.id != null;
+    if (itemsLoved.isEmpty) return false;
+
+    return itemsLoved.contains(item);
   }
 }
