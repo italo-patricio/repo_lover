@@ -1,4 +1,11 @@
 # repo_lover
+
+Layout proposed 
+
+![Github Logo](/screens/screens.png)
+    
+
+
 ## Getting Started
 
 1. flutter packages pub get
