@@ -46,50 +46,50 @@ class _SearchRepoPageState extends State<SearchRepoPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Observer(builder: (_) {
-          if (_searchStore.searchResultModel.status == FutureStatus.pending) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if(_searchStore.searchResultModel.status == FutureStatus.rejected) {
-            return Center(child: Text('Falha na comunicação'));
-          }
-
-          return Column(
+        child: Column(
             children: <Widget>[
               InputWidget(
                 placeholder: 'Pesquisar',
                 onSubmitted: _searchStore.search,
               ),
               messageInfo(),
-              Expanded(
-                child: ListView.builder(
-                    itemCount:
-                        _searchStore.searchResultModel?.value?.items?.length ??
-                            0,
-                    itemBuilder: (_, index) {
-                      final _item =
-                          _searchStore.searchResultModel.value.items[index];
+              Observer(builder: (_) {
+                if (_searchStore.isLoading) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-                      return RepositoryItemWidget(
-                        item: _item,
-                        onLoveAdd: _searchStore.addItemLoved,
-                        onLoveRemove: _searchStore.removeItemLoved,
-                      );
-                    }),
-              )
+                if(_searchStore.searchResultModel == null) {
+                  return Container();
+                }
+          
+                return Expanded(
+                  child: ListView.builder(
+                      itemCount: _searchStore
+                              .searchResultModel.items.length,
+                      itemBuilder: (_, index) {
+                        final _item =
+                            _searchStore.searchResultModel.items[index];
+
+                        return RepositoryItemWidget(
+                          item: _item,
+                          onLoveAdd: _searchStore.addItemLoved,
+                          onLoveRemove: _searchStore.removeItemLoved,
+                        );
+                      }),
+                );
+              })
             ],
-          );
-        }),
+          )
       ),
     );
   }
 
   messageInfo() {
-    if (_searchStore.searchResultModel?.value?.items != null) {
+    if (_searchStore.searchResultModel?.items != null) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Text(
-          '${_searchStore.searchResultModel.value.totalCount} Repositórios localizados',
+          '${_searchStore.searchResultModel.totalCount} Repositórios localizados',
           style: GoogleFonts.lato(
             fontSize: 17,
             color: Color(0xff8F8B8B),

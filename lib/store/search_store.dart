@@ -13,7 +13,7 @@ abstract class SearchStoreBase with Store {
   final ApiGithubService _apiGithubService;
 
   @observable
-  ObservableFuture<SearchResultModel> searchResultModel = ObservableFuture.value(SearchResultModel());
+  SearchResultModel searchResultModel;
 
   @observable
   bool isLoading = false;
@@ -41,8 +41,14 @@ abstract class SearchStoreBase with Store {
     if (term.isEmpty) {
       return;
     }
-    searchResultModel =  _apiGithubService.searchRepo(term).asObservable();
-
+    try{
+      isLoading = true;
+      searchResultModel = await _apiGithubService.searchRepo(term);
+    } catch(e) {
+      print(e);
+    } finally{
+      isLoading = false;
+    }
   }
 
   isLoved(item) {

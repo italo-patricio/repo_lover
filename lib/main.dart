@@ -6,17 +6,23 @@ import 'package:repo_lover/store/search_store.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
-  runApp(RepoLoverApp());
+  final service = ApiGithubService(http.Client());
+  runApp(RepoLoverApp(searchStore: SearchStore(service),));
 }
 
 
 class RepoLoverApp extends StatefulWidget {
+  final SearchStore searchStore;
+
+  const RepoLoverApp({Key key, this.searchStore}) : super(key: key);
   @override
-  _RepoStateLoverApp createState() => _RepoStateLoverApp();
+  _RepoStateLoverApp createState() => _RepoStateLoverApp(searchStore);
 }
 
 class _RepoStateLoverApp extends State<RepoLoverApp> {
-  final _searchStore = SearchStore(ApiGithubService(http.Client));
+  final _searchStore;
+
+  _RepoStateLoverApp(this._searchStore);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

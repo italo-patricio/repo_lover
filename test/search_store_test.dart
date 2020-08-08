@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobx/mobx.dart' as mobx;
@@ -36,12 +37,15 @@ void main() {
         'should load SearchResultModel with items when term searched is not empty',
         () async {
       final store = SearchStore(service);
-      when(client.get(Uri.parse('https://api.github.com/search/repositories?q=flutter')))
-          .thenAnswer((_) async => http.Response(jsonEncode(resultMock), 200));
+      when(client.get(Uri.parse(
+              'https://api.github.com/search/repositories?q=flutter')))
+          .thenAnswer((_) async => http.Response(
+                  jsonEncode(resultMock).toString(), 200, headers: {
+                HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
+              }));
 
       final disposer = mobx.reaction((_) => store.searchResultModel, (_) {
-        expect(store.searchResultModel.status, mobx.FutureStatus.fulfilled);
-        expect(store.searchResultModel.value.items, isNotNull);
+       expect(store.searchResultModel.items, isNotNull);
       });
 
       await store.search('flutter');
@@ -53,12 +57,15 @@ void main() {
         'should load future status reject SearchResultModel.status when term searched is empty',
         () async {
       final store = SearchStore(service);
-      when(client.get(Uri.parse('https://api.github.com/search/repositories?q=')))
-          .thenAnswer((_) async => http.Response(jsonEncode(resultMockFail), 422));
+      when(client
+              .get(Uri.parse('https://api.github.com/search/repositories?q=')))
+          .thenAnswer((_) async => http.Response(
+                  jsonEncode(resultMockFail), 422, headers: {
+                HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
+              }));
 
       final disposer = mobx.reaction((_) => store.searchResultModel, (_) {
-        expect(store.searchResultModel.status, mobx.FutureStatus.rejected);
-        expect(store.searchResultModel.value.items, isNull);
+        expect(store.searchResultModel.items, isNull);
       });
 
       await store.search('');
