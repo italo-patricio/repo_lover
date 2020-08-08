@@ -13,13 +13,13 @@ mixin _$SearchStore on SearchStoreBase, Store {
       Atom(name: 'SearchStoreBase.searchResultModel');
 
   @override
-  Observable<SearchResultModel> get searchResultModel {
+  ObservableFuture<SearchResultModel> get searchResultModel {
     _$searchResultModelAtom.reportRead();
     return super.searchResultModel;
   }
 
   @override
-  set searchResultModel(Observable<SearchResultModel> value) {
+  set searchResultModel(ObservableFuture<SearchResultModel> value) {
     _$searchResultModelAtom.reportWrite(value, super.searchResultModel, () {
       super.searchResultModel = value;
     });

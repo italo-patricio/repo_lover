@@ -1,12 +1,11 @@
 import 'dart:convert' as converter;
-
-import 'package:http/http.dart' as http;
 import 'package:repo_lover/models/search_result_model.dart';
 
 class ApiGithubService {
   final String _urlApiGithub = 'https://api.github.com';
+  final http;
 
-  ApiGithubService();
+  ApiGithubService(this.http);
 
   Future<SearchResultModel> searchRepo(term) async {
     var response =

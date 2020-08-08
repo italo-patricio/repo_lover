@@ -1,6 +1,5 @@
 import 'package:mobx/mobx.dart';
 import 'package:repo_lover/models/repository_model.dart';
-import 'package:repo_lover/store/search_store.dart';
 
 part 'search_result_model.g.dart';
 

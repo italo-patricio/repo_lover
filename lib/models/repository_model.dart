@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -28,8 +26,9 @@ abstract class RepositoryModelBase with Store {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is RepositoryModel && other.id == id;
+      identical(this, other) || other is RepositoryModel && other.id == id && hashCode == other.hashCode;
 
   @override
-  int get hasCode => hashValues(id, title);
+  int get hashCode => hashValues(id, title);
+
 }

@@ -24,7 +24,7 @@ class _RepositoryItemWidgetState extends State<RepositoryItemWidget> {
   final Function(RepositoryModel) onTap;
 
   _RepositoryItemWidgetState(
-    @required RepositoryModel item,
+    RepositoryModel item,
     this.onLoveAdd,
     this.onLoveRemove,
     this.onTap,

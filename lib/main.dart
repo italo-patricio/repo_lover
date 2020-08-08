@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:repo_lover/models/search_result_model.dart';
 import 'package:repo_lover/pages/search_repo_page.dart';
 import 'package:repo_lover/services/api_github_service.dart';
 import 'package:repo_lover/store/search_store.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   runApp(RepoLoverApp());
@@ -16,7 +16,7 @@ class RepoLoverApp extends StatefulWidget {
 }
 
 class _RepoStateLoverApp extends State<RepoLoverApp> {
-  final _searchStore = SearchStore();
+  final _searchStore = SearchStore(ApiGithubService(http.Client));
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

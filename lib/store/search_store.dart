@@ -10,10 +10,10 @@ part 'search_store.g.dart';
 class SearchStore = SearchStoreBase with _$SearchStore;
 
 abstract class SearchStoreBase with Store {
-  final _apiGithubService = ApiGithubService();
+  final ApiGithubService _apiGithubService;
 
   @observable
-  Observable<SearchResultModel> searchResultModel = Observable(null);
+  ObservableFuture<SearchResultModel> searchResultModel = ObservableFuture.value(SearchResultModel());
 
   @observable
   bool isLoading = false;
@@ -21,6 +21,8 @@ abstract class SearchStoreBase with Store {
   @observable
   ObservableSet<RepositoryModel> itemsLoved =
       ObservableSet.of(<RepositoryModel>[]);
+
+  SearchStoreBase(this._apiGithubService);
 
   @action
   addItemLoved(RepositoryModel item) {
@@ -39,14 +41,8 @@ abstract class SearchStoreBase with Store {
     if (term.isEmpty) {
       return;
     }
-    isLoading = true;
-    searchResultModel.value = await _apiGithubService.searchRepo(term);
-    searchResultModel.value.items.forEach((e) async {
-      if (isLoved(e)) {
-        await e.setIsLoved(true);
-      }
-    });
-    isLoading = false;
+    searchResultModel =  _apiGithubService.searchRepo(term).asObservable();
+
   }
 
   isLoved(item) {
