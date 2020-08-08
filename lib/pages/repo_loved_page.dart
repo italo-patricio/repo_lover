@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:repo_lover/store/search_store.dart';
 import 'package:repo_lover/widgets/repository_item_widget.dart';
 
@@ -28,15 +29,20 @@ class _RepoLovedPageState extends State<RepoLovedPage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: ListView.builder(
-                  itemCount: _searchStore.itemsLoved?.length ?? 0,
-                  itemBuilder: (_, index) {
-                    final _item = _searchStore.itemsLoved.elementAt(index);
-                    return RepositoryItemWidget(
-                      item: _item,
-                      onLoveRemove: _searchStore.removeItemLoved,
-                    );
-                  }),
+              child: Observer(builder: (_) {
+                if(_searchStore.itemsLoved.isEmpty) {
+                  return Center(child: Text('Nada adicionado a lista de loved'),);
+                }
+                return ListView.builder(
+                    itemCount: _searchStore.itemsLoved?.length ?? 0,
+                    itemBuilder: (_, index) {
+                      final _item = _searchStore.itemsLoved.elementAt(index);
+                      return RepositoryItemWidget(
+                        item: _item,
+                        onLoveRemove: _searchStore.removeItemLoved,
+                      );
+                    });
+              }),
             )
           ],
         ),

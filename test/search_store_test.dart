@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobx/mobx.dart' as mobx;
+import 'package:repo_lover/models/repository_model.dart';
 import 'package:repo_lover/services/api_github_service.dart';
 
 import 'package:repo_lover/store/search_store.dart';
@@ -45,7 +46,7 @@ void main() {
               }));
 
       final disposer = mobx.reaction((_) => store.searchResultModel, (_) {
-       expect(store.searchResultModel.items, isNotNull);
+        expect(store.searchResultModel.items, isNotNull);
       });
 
       await store.search('flutter');
@@ -69,6 +70,32 @@ void main() {
       });
 
       await store.search('');
+
+      disposer();
+    });
+    test('should exists item in list loved ', () async {
+      final store = SearchStore(service);
+      when(client
+              .get(Uri.parse('https://api.github.com/search/repositories?q=')))
+          .thenAnswer((_) async => http.Response(
+                  jsonEncode(resultMock), 200, headers: {
+                HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
+              }));
+      store.addItemLoved(RepositoryModel.fromJson({
+        'id': 31792824,
+        "name": "flutter",
+        "description": "xablauton",
+        'owner': { 
+          'avatar_url': 'https://avatars3.githubusercontent.com/u/14101776?v=4',
+        }
+      }));
+
+      final disposer = mobx.reaction((_) => store.searchResultModel, (_) {
+        expect(store.searchResultModel.items, isNotNull);
+        expect(store.isLoved(store.searchResultModel.items.first), true);
+      });
+
+      await store.search('flutter');
 
       disposer();
     });

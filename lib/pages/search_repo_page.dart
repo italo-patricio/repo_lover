@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobx/mobx.dart';
 import 'package:repo_lover/pages/repo_loved_page.dart';
 import 'package:repo_lover/store/search_store.dart';
 import 'package:repo_lover/widgets/icon_love_badge_widget.dart';

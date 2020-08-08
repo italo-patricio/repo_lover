@@ -44,6 +44,12 @@ abstract class SearchStoreBase with Store {
     try{
       isLoading = true;
       searchResultModel = await _apiGithubService.searchRepo(term);
+      searchResultModel.items.forEach((e) {
+        if(isLoved(e)){
+          e.setIsLoved(true);
+        }
+      });
+
     } catch(e) {
       print(e);
     } finally{
