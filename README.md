@@ -2,7 +2,7 @@
 
 Layout proposed 
 
-![Github Logo](/screens/screens.png)
+![Screens](/screens/screens.png)
     
 
 
