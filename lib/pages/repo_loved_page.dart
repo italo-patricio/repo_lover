@@ -20,9 +20,11 @@ class _RepoLovedPageState extends State<RepoLovedPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Repo amados (${_searchStore.itemsLoved.length})',
-        ),
+        title: Observer(builder: (_) {
+          return Text(
+            'Repo amados (${_searchStore.itemsLoved.length})',
+          );
+        }),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -30,8 +32,10 @@ class _RepoLovedPageState extends State<RepoLovedPage> {
           children: <Widget>[
             Expanded(
               child: Observer(builder: (_) {
-                if(_searchStore.itemsLoved.isEmpty) {
-                  return Center(child: Text('Nada adicionado a lista de loved'),);
+                if (_searchStore.itemsLoved.isEmpty) {
+                  return Center(
+                    child: Text('Nada adicionado a lista de loved'),
+                  );
                 }
                 return ListView.builder(
                     itemCount: _searchStore.itemsLoved?.length ?? 0,
